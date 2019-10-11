@@ -36,13 +36,13 @@ def lambda_handler(event, context):
     #     raise e
 
     myBuckets = Buckets()
-    myBuckets.list()
+    bucketsList = myBuckets.list()
 
 
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello world", 
+            "message": "hello world {}".format(bucketsList), 
             # "location": ip.text.replace("\n", "")
         }),
     }

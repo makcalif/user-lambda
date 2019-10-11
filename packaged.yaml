@@ -12,7 +12,7 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://user-lambda/9238d935de70ba3efdd3ac6396b04353
+      CodeUri: s3://user-lambda/5b1530a92a240eab22cb2434727945f2
       Handler: app.lambda_handler
       Runtime: python3.6
       Events:
