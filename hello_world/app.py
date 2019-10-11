@@ -3,6 +3,7 @@ import json
 # import requests
 
 from Buckets import Buckets
+from Topic import Topic
 
 
 def lambda_handler(event, context):
@@ -38,11 +39,13 @@ def lambda_handler(event, context):
     myBuckets = Buckets()
     bucketsList = myBuckets.list()
 
+    userTopic = Topic()
+    snsResponse = userTopic.publish()
 
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello world {}".format(bucketsList), 
+            "message": "hello world {} sns:{}".format(bucketsList, snsResponse), 
             # "location": ip.text.replace("\n", "")
         }),
     }

@@ -12,7 +12,7 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://user-lambda/5b1530a92a240eab22cb2434727945f2
+      CodeUri: s3://user-lambda/1af8ef1c73b46e3ae432bda1ccfd2183
       Handler: app.lambda_handler
       Runtime: python3.6
       Events:
@@ -21,6 +21,13 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+          Policies:
+          - AmazonS3ReadOnlyAccess
+  UserSNS:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: UserSNS
+      TopicName: UserSNSTopic
 Outputs:
   HelloWorldApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
@@ -38,3 +45,7 @@ Outputs:
       Fn::GetAtt:
       - HelloWorldFunctionRole
       - Arn
+  UserSNS:
+    Description: SNS Topic for User Events
+    Value:
+      Ref: UserSNS
