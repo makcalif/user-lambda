@@ -22,15 +22,60 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /hello
-            Method: get 
-          Policies: 
-            - AmazonS3ReadOnlyAccess
-
+            Method: get
+      Policies: 
+        - SNSPublishMessagePolicy:
+            TopicName:
+              !GetAtt UserSNS.TopicName
   UserSNS:
     Type: AWS::SNS::Topic
     Properties:
       DisplayName: UserSNS
       TopicName: UserSNSTopic
+
+  UserSQS:
+    Type: AWS::SQS::Queue
+    Properties: 
+          QueueName: UserQueue
+
+  userQueueToSnsSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !GetAtt UserSQS.Arn
+      Protocol: sqs
+      RawMessageDelivery: true
+      TopicArn: !Ref UserSNS
+
+  queueInvokesLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: subscriber_lambda/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      Environment:
+        Variables: 
+          MY_SQS_QUEUE_URL: !Ref UserSQS
+      Events:
+        SqsJobQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt UserSQS.Arn
+            BatchSize: 1
+
+  userQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref UserSQS
+      PolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal: "*"
+          Action: "sqs:*"
+          Resource: "*"
+          Condition:
+            ArnEquals:
+              "aws:SourceArn": !Ref UserSNS
 
 
 Outputs:

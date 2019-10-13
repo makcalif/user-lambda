@@ -36,16 +36,18 @@ def lambda_handler(event, context):
 
     #     raise e
 
-    myBuckets = Buckets()
-    bucketsList = myBuckets.list()
+    print("starting 1")
+    #myBuckets = Buckets()
+    #bucketsList = "disabled" #myBuckets.list()
 
     userTopic = Topic()
     snsResponse = userTopic.publish()
+    print("done")
 
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello world {} sns:{}".format(bucketsList, snsResponse), 
+            "message": "hello world sns:{}".format( snsResponse), 
             # "location": ip.text.replace("\n", "")
         }),
     }
